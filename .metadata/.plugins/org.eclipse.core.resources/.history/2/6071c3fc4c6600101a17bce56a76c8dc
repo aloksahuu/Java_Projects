@@ -1,0 +1,49 @@
+package com.aurionpro.test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import com.aurionpro.model.MathUtils;
+
+@DisplayName("MathUtils Test Class")
+public class MathUtilsTest {
+
+    MathUtils mathUtils;
+
+    @BeforeEach
+    void setUp() {
+        mathUtils = new MathUtils();
+        System.out.println(" Test is starting...");
+    }
+
+    @AfterEach
+    void tearDown() {
+        System.out.println("Test completed.\n");
+    }
+
+    @Test
+    @DisplayName("Testing addition of two numbers")
+    void testAdd() {
+        assertEquals(15, mathUtils.add(10, 5));
+    }
+
+    @Test
+    @DisplayName("Testing multiplication of two numbers")
+    void testMultiply() {
+        assertEquals(20, mathUtils.multiply(4, 5));
+    }
+
+    @ParameterizedTest(name = "Test if {0} is even")
+    @ValueSource(ints = {2, 4, 6, 10, 100, 0, -2})
+    @DisplayName("Check multiple values for even")
+    void testIsEven(int number) {
+        assertTrue(mathUtils.isEven(number));
+    }
+}

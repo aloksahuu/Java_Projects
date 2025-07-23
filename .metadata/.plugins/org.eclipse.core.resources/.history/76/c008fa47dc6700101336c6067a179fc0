@@ -1,0 +1,143 @@
+package com.aurionpro.Solution.test;
+
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.TreeSet;
+
+import com.aurionpro.Solution.model.Builder;
+import com.aurionpro.Solution.model.Guitar;
+import com.aurionpro.Solution.model.GuitarSpec;
+import com.aurionpro.Solution.model.Inventory;
+import com.aurionpro.Solution.model.Type;
+import com.aurionpro.Solution.model.Wood;
+
+public class GuitarUIDesign {
+
+	public static void initializeInventory(Inventory inventory) {
+		inventory.addGuitar("F001", 14999.95, Builder.FENDER, "Stratocastor", Type.ELECTRIC, 12, Wood.ALDER,
+				Wood.ALDER);
+		inventory.addGuitar("F002", 13999.95, Builder.FENDER, "Stratocastor", Type.ELECTRIC, 6, Wood.MAPLE, Wood.ALDER);
+		inventory.addGuitar("F003", 13499.95, Builder.FENDER, "Jazzmaster", Type.ELECTRIC, 6, Wood.MAPLE, Wood.CEDAR);
+		inventory.addGuitar("G001", 15499.95, Builder.GIBSON, "Les Paul", Type.ELECTRIC, 6, Wood.MAHOGANY, Wood.MAPLE);
+		inventory.addGuitar("G002", 16999.00, Builder.GIBSON, "Explorer", Type.ELECTRIC, 6, Wood.MAHOGANY,
+				Wood.MAHOGANY);
+		inventory.addGuitar("M001", 11999.00, Builder.MARTIN, "D-28", Type.ACOUSTIC, 6, Wood.BRAZILIAN_ROSEWOOD,
+				Wood.ADIRONDACK);
+		inventory.addGuitar("M002", 12499.00, Builder.MARTIN, "LX1", Type.ACOUSTIC, 6, Wood.MAPLE, Wood.CEDAR);
+		inventory.addGuitar("C001", 13499.95, Builder.COLLINGS, "C10", Type.ACOUSTIC, 6, Wood.CEDAR, Wood.CEDAR);
+		inventory.addGuitar("R001", 17499.00, Builder.RYAN, "Nightingale", Type.ACOUSTIC, 12, Wood.INDIAN_ROSEWOOD,
+				Wood.SITKA);
+		inventory.addGuitar("P001", 19999.00, Builder.PRS, "Custom 24", Type.ELECTRIC, 6, Wood.MAPLE, Wood.COCOBOLO);
+	}
+
+	public static List<Guitar> promptSearchFilters(Scanner scanner, Inventory inventory) {
+		try {
+			Builder builder = selectEnum(scanner, Builder.values(), "Builder");
+			String model = selectModel(scanner, inventory);
+			Type type = selectEnum(scanner, Type.values(), "Type");
+			Integer numStrings = selectInt(scanner, "Number of Strings (6/10/12) or leave empty: ");
+			Wood backWood = selectEnum(scanner, Wood.values(), "Back Wood");
+			Wood topWood = selectEnum(scanner, Wood.values(), "Top Wood");
+
+			List<Guitar> filtered = new ArrayList<>();
+			for (Guitar g : inventory.getAllGuitars()) {
+				GuitarSpec spec = g.getSpec();
+				if (builder != null && spec.getBuilder() != builder)
+					continue;
+				if (!model.isEmpty() && !spec.getModel().equalsIgnoreCase(model))
+					continue;
+				if (type != null && spec.getType() != type)
+					continue;
+				if (numStrings != null && spec.getNumString() != numStrings)
+					continue;
+				if (backWood != null && spec.getBackWood() != backWood)
+					continue;
+				if (topWood != null && spec.getTopWood() != topWood)
+					continue;
+				filtered.add(g);
+			}
+			return filtered;
+		} catch (Exception e) {
+			System.out.println("Error during search. Returning empty result.");
+			return new ArrayList<>();
+		}
+	}
+
+	private static <T extends Enum<T>> T selectEnum(Scanner scanner, T[] values, String label) {
+		System.out.println("\nSelect " + label + " (or press Enter to skip):");
+		for (int i = 0; i < values.length; i++) {
+			System.out.printf("%d. %s%n", i + 1, values[i]);
+		}
+		System.out.print("Enter choice: ");
+		String input = scanner.nextLine().trim();
+		if (input.isEmpty())
+			return null;
+		try {
+			int index = Integer.parseInt(input);
+			if (index > 0 && index <= values.length)
+				return values[index - 1];
+		} catch (Exception ignored) {
+		}
+		System.out.println("Invalid input. Skipping " + label);
+		return null;
+	}
+
+	private static String selectModel(Scanner scanner, Inventory inventory) {
+		Set<String> models = new TreeSet<>();
+		for (Guitar g : inventory.getAllGuitars()) {
+			models.add(g.getSpec().getModel());
+		}
+		List<String> list = new ArrayList<>(models);
+		System.out.println("\nSelect Model (or press Enter to skip):");
+		for (int i = 0; i < list.size(); i++) {
+			System.out.printf("%d. %s%n", i + 1, list.get(i));
+		}
+		System.out.print("Enter choice: ");
+		String input = scanner.nextLine().trim();
+		if (input.isEmpty())
+			return "";
+		try {
+			int index = Integer.parseInt(input);
+			if (index > 0 && index <= list.size())
+				return list.get(index - 1);
+		} catch (Exception ignored) {
+		}
+		System.out.println("Invalid input. Skipping model.");
+		return "";
+	}
+
+	private static Integer selectInt(Scanner scanner, String prompt) {
+		System.out.print("\n" + prompt);
+		String input = scanner.nextLine().trim();
+		if (input.isEmpty())
+			return null;
+		try {
+			return Integer.parseInt(input);
+		} catch (NumberFormatException e) {
+			System.out.println("Invalid number. Skipping.");
+			return null;
+		}
+	}
+
+	public static void displayGuitars(List<Guitar> guitars) {
+		if (guitars.isEmpty()) {
+			System.out.println("No guitars found.");
+			return;
+		}
+
+		System.out.printf("%-8s %-10s %-15s %-10s %-10s %-15s %-15s %-10s%n", "Serial", "Builder", "Model", "Type",
+				"Strings", "Back Wood", "Top Wood", "Price");
+		System.out.println("=".repeat(90));
+		NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+		for (Guitar g : guitars) {
+			GuitarSpec s = g.getSpec();
+			System.out.printf("%-8s %-10s %-15s %-10s %-10d %-15s %-15s %-10s%n", g.getSerialNumber(), s.getBuilder(),
+					s.getModel(), s.getType(), s.getNumString(), s.getBackWood(), s.getTopWood(),
+					nf.format(g.getPrice()));
+		}
+	}
+}

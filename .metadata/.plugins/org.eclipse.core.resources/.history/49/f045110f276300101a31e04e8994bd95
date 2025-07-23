@@ -1,0 +1,8 @@
+package com.aurionpro.Adapter.Example;
+
+public class Main {
+	OldCharger oldcharger = new OldCharger();
+	ITypeCCharger adapter = new ChargerAdapter(oldcharger);
+	
+}
+

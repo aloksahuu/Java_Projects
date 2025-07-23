@@ -1,0 +1,8 @@
+package com.aurionpro.model;
+
+public class StringProcessor {
+	public boolean isPalindrome(String str) {
+		if(str == null) return false;
+		
+	}
+}

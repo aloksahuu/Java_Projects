@@ -1,0 +1,153 @@
+package com.aurionpro.Solution.test;
+
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Scanner;
+
+import com.aurionpro.Solution.model.Builder;
+import com.aurionpro.Solution.model.Guitar;
+import com.aurionpro.Solution.model.GuitarSpec;
+import com.aurionpro.Solution.model.Inventory;
+import com.aurionpro.Solution.model.Type;
+import com.aurionpro.Solution.model.Wood;
+
+public class FindGuitarTester {
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		Inventory inventory = new Inventory();
+		initializeInventory(inventory);
+
+		System.out.println("=== Welcome to Rick's Guitar Finder ===");
+
+		boolean continueSearch = true;
+
+		while (continueSearch) {
+			try {
+				// Show Builder options
+				System.out.println("\nAvailable Builders: FENDER, GIBSON, MARTIN, COLLINGS, OLSON, RYAN, PRS, ANY");
+				System.out.print("Enter builder: ");
+				Builder builder = Builder.valueOf(scanner.next().toUpperCase());
+
+				scanner.nextLine(); // Consume newline
+
+				// Show Model examples (You can customize this list)
+				System.out.println("Example models: Stratocastor, Les Paul, D-28, OMJM, SG, SJ");
+				System.out.print("Enter model name: ");
+				String model = scanner.nextLine().trim();
+
+				// Show Type options
+				System.out.println("Available Types: ACOUSTIC, ELECTRIC");
+				System.out.print("Enter type: ");
+				Type type = Type.valueOf(scanner.next().toUpperCase());
+
+				// Show numStrings tip
+				System.out.println("Available string options: 6, 10, 12");
+				System.out.print("Enter number of strings: ");
+				int numStrings = scanner.nextInt();
+
+				// Show Wood options
+				System.out.println(
+						"Available Woods: INDIAN_ROSEWOOD, BRAZILIAN_ROSEWOOD, MAHOGANY, MAPLE, COCOBOLO, CEDAR, ADIRONDACK, ALDER, SITKA");
+				System.out.print("Enter back wood: ");
+				Wood backWood = Wood.valueOf(scanner.next().toUpperCase());
+
+				System.out.print("Enter top wood: ");
+				Wood topWood = Wood.valueOf(scanner.next().toUpperCase());
+
+				// Search based on input
+				GuitarSpec userSpec = new GuitarSpec(builder, model, type, numStrings, backWood, topWood);
+				List<Guitar> matches = inventory.search(userSpec);
+
+				System.out.println("\n=== Search Results ===");
+				if (!matches.isEmpty()) {
+					for (Guitar guitar : matches) {
+						GuitarSpec spec = guitar.getSpec();
+						System.out.println("Serial No.: " + guitar.getSerialNumber());
+						System.out.println("→ " + spec.getBuilder() + " " + spec.getModel() + " " + spec.getType());
+						System.out.println("→ Strings: " + spec.getNumString());
+						System.out.println("→ Back Wood: " + spec.getBackWood());
+						System.out.println("→ Top Wood: " + spec.getTopWood());
+						System.out.println("→ Price: " + guitar.getPrice());
+						System.out.println("---------------------------");
+					}
+				} else {
+					System.out.println("Sorry, we have no guitars that match your preferences.");
+				}
+
+			} catch (IllegalArgumentException e) {
+				System.out.println("Invalid input. Please enter correct values as instructed.");
+				scanner.nextLine(); // Clear input buffer
+			} catch (InputMismatchException e) {
+				System.out.println("Please enter valid numbers where required.");
+				scanner.nextLine(); // Clear invalid input
+			} catch (Exception e) {
+				System.out.println("Unexpected error: " + e.getMessage());
+				scanner.nextLine(); // Clear any stuck input
+			}
+
+			// Ask user if they want to search again
+
+			boolean validInput = false;
+			while (!validInput) {
+				System.out.print("\n Do you want to search more guitars? (yes/no): ");
+				String response = scanner.next().trim().toLowerCase();
+
+				if (response.equals("yes") || response.equals("y")) {
+					validInput = true; // continueSearch remains true by default
+				} else if (response.equals("no") || response.equals("n")) {
+					validInput = true;
+					continueSearch = false;
+					System.out.println("\nThank you for using Rick's Guitar Finder!");
+				} else {
+					System.out.println("Please enter a valid response: yes / no");
+				}
+			}
+
+		}
+
+		scanner.close();
+	}
+
+	private static void initializeInventory(Inventory inventory) {
+		// FENDER
+		inventory.addGuitar("F001", 14999.95, Builder.FENDER, "Stratocastor", Type.ELECTRIC, 12, Wood.ALDER,
+				Wood.ALDER);
+		inventory.addGuitar("F002", 13999.95, Builder.FENDER, "Stratocastor", Type.ELECTRIC, 6, Wood.MAPLE, Wood.ALDER);
+		inventory.addGuitar("F003", 12999.95, Builder.FENDER, "AcoustiFender", Type.ACOUSTIC, 12, Wood.ALDER,
+				Wood.ALDER);
+		inventory.addGuitar("F004", 10999.95, Builder.FENDER, "FenderSix", Type.ACOUSTIC, 6, Wood.MAHOGANY, Wood.MAPLE);
+
+		// GIBSON
+		inventory.addGuitar("G001", 15499.95, Builder.GIBSON, "Les Paul", Type.ELECTRIC, 6, Wood.MAHOGANY, Wood.MAPLE);
+		inventory.addGuitar("G002", 15999.95, Builder.GIBSON, "SG", Type.ELECTRIC, 10, Wood.MAHOGANY, Wood.MAHOGANY);
+		inventory.addGuitar("G003", 12999.95, Builder.GIBSON, "GibAcoustic", Type.ACOUSTIC, 12, Wood.ALDER, Wood.ALDER);
+		inventory.addGuitar("G004", 11999.95, Builder.GIBSON, "GibSix", Type.ACOUSTIC, 6, Wood.MAPLE, Wood.MAPLE);
+
+		// MARTIN
+		inventory.addGuitar("M001", 11999.00, Builder.MARTIN, "D-28", Type.ACOUSTIC, 6, Wood.BRAZILIAN_ROSEWOOD,
+				Wood.ADIRONDACK);
+		inventory.addGuitar("M002", 12999.00, Builder.MARTIN, "OMJM", Type.ACOUSTIC, 12, Wood.INDIAN_ROSEWOOD,
+				Wood.SITKA);
+		inventory.addGuitar("M003", 14999.00, Builder.MARTIN, "X-Series", Type.ELECTRIC, 6, Wood.CEDAR, Wood.CEDAR);
+
+		// ANY brand
+		inventory.addGuitar("A001", 9999.00, Builder.ANY, "Starter", Type.ACOUSTIC, 6, Wood.MAPLE, Wood.MAPLE);
+		inventory.addGuitar("A002", 8999.00, Builder.ANY, "SimpleSix", Type.ACOUSTIC, 6, Wood.ALDER, Wood.ALDER);
+		inventory.addGuitar("A003", 10999.00, Builder.ANY, "Any12", Type.ACOUSTIC, 12, Wood.ALDER, Wood.ALDER);
+		inventory.addGuitar("A004", 8999.00, Builder.ANY, "AnyElec", Type.ELECTRIC, 12, Wood.ALDER, Wood.ALDER);
+
+		// COLLINGS
+		inventory.addGuitar("C001", 13499.95, Builder.COLLINGS, "C10", Type.ACOUSTIC, 6, Wood.CEDAR, Wood.CEDAR);
+
+		// OLSON
+		inventory.addGuitar("O001", 19999.95, Builder.OLSON, "SJ", Type.ACOUSTIC, 6, Wood.COCOBOLO, Wood.MAPLE);
+
+		// RYAN
+		inventory.addGuitar("R001", 17499.00, Builder.RYAN, "Nightingale", Type.ACOUSTIC, 12, Wood.INDIAN_ROSEWOOD,
+				Wood.SITKA);
+
+		// PRS ELECTRIC
+		inventory.addGuitar("P001", 18999.00, Builder.PRS, "Custom 24", Type.ELECTRIC, 6, Wood.MAPLE, Wood.COCOBOLO);
+	}
+
+}

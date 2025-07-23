@@ -1,0 +1,3 @@
+module github {
+	requires Interface;
+}

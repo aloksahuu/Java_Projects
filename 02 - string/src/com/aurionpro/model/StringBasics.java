@@ -1,0 +1,41 @@
+package com.aurionpro.model;
+
+public class StringBasics {
+public static void main(String[] args) {
+//	String str1 = "amit";
+//	String str2 = "amit";
+//	System.out.println(str1==str2);
+	String str3 ="hello";
+	String str4 ="hello";
+//	System.out.println(str3.concat(" world"));
+	
+	//heap memory 
+//	String str4 = new String("hello");
+//	String str5 = new String ("hello");
+//	System.out.println(str4==str5);
+//	
+//	String string1= "Amit";
+//	String string2= "Amit";
+//
+//	System.out.println(string1==string2);
+//
+	String greet = "Welcome to Swabhav";
+//
+//	System.out.println(greet.charAt(1));
+//	System.out.println(greet.charAt(10));
+//	System.out.println(greet.length());
+//	System.out.println(greet.substring(10,greet.length()));
+//	System.out.println(greet.substring(10));
+//	
+//	for(int i=0; i<greet.length();i++)
+//	{
+//	    System.out.print(greet.charAt(i) + " ");
+//	}
+//	System.out.println(greet.startsWith("wel"));
+	
+	System.out.println(str3.compareTo(str4));
+	System.out.println(str3.equals(str4));
+	
+//	System.out.println(greet.re);
+}
+}

@@ -1,0 +1,98 @@
+package Com.aurionpro.model;
+
+import java.util.Scanner;
+
+public class TicTacToeFacade {
+    private Player player1;
+    private Player player2;
+    private Board board;
+    private GameEngine engine;
+    private Scanner scanner;
+
+    public void startGame() {
+        scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to Tic Tac Toe!");
+
+        while (true) {
+            setupPlayers();
+            board = new Board();
+            engine = new GameEngine(player1);
+            playGame();
+
+            System.out.print("\nDo you want to play again? (yes/no): ");
+            String choice = scanner.next().trim().toLowerCase();
+            if (!choice.equals("yes") && !choice.equals("y")) {
+                System.out.println("Thanks for playing. Goodbye!");
+                break;
+            }
+            scanner.nextLine(); // Clear the buffer
+        }
+
+        scanner.close();
+    }
+
+    private void setupPlayers() {
+        scanner.nextLine(); // Clear buffer before reading names
+        System.out.print("Player 1, enter your name: ");
+        String name1 = scanner.nextLine();
+        player1 = new Player(name1, Symbol.X);
+
+        System.out.print("Player 2, enter your name: ");
+        String name2 = scanner.nextLine();
+        player2 = new Player(name2, Symbol.O);
+    }
+
+    private void playGame() {
+        GameStatus status = GameStatus.IN_PROGRESS;
+
+        while (status == GameStatus.IN_PROGRESS) {
+            board.displayBoard();
+            Player current = engine.getCurrPlayer();
+            System.out.println(current.getName() + "'s (" + current.getSymbol() + ") turn.");
+
+            int row = -1, col = -1;
+
+            while (true) {
+                System.out.print("Enter row and column (0-2): ");
+                if (!scanner.hasNextInt()) {
+                    System.out.println("Invalid input! Please enter numbers between 0-2.");
+                    scanner.nextLine(); // clear the invalid input
+                    continue;
+                }
+
+                row = scanner.nextInt();
+
+                if (!scanner.hasNextInt()) {
+                    System.out.println("Invalid input! Please enter numbers between 0-2.");
+                    scanner.nextLine(); // clear the invalid input
+                    continue;
+                }
+
+                col = scanner.nextInt();
+
+                if (row < 0 || row > 2 || col < 0 || col > 2) {
+                    System.out.println("Invalid cell! Row and column must be between 0 and 2.");
+                } else if (!board.isCellEmpty(row, col)) {
+                    System.out.println("Cell already occupied! Choose another.");
+                } else {
+                    break;
+                }
+            }
+
+            board.placeSymbol(row, col, current.getSymbol());
+
+            if (engine.isWinningMove(board, current.getSymbol())) {
+                board.displayBoard();
+                System.out.println("\nResult: " + current.getName() + " wins! Congratulations!");
+                status = GameStatus.WIN;
+            } else if (board.isfull()) {
+                board.displayBoard();
+                System.out.println("\nResult: It's a draw!");
+                status = GameStatus.DRAW;
+            } else {
+                engine.switchPlayer(player1, player2);
+            }
+        }
+    }
+}

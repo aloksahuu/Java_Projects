@@ -1,0 +1,20 @@
+package com.aurionpro.model;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
+public class AssertAllDemo {
+	@Test
+
+	public void testUserDetails() {
+		String name = "Anshika";
+		int age = 30;
+		String city = "Mumbai";
+
+		assertAll("User Details", () -> assertEquals("Amit", name), () -> assertEquals(30, age),
+				() -> assertEquals("Mumbai", city));
+	}
+}

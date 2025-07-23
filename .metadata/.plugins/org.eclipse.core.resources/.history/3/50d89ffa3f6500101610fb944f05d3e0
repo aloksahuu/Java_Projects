@@ -1,0 +1,43 @@
+package com.aurionpro.Solution.test;
+
+import java.util.Iterator;
+import java.util.List;
+
+import com.aurionpro.Solution.model.Builder;
+import com.aurionpro.Solution.model.Guitar;
+import com.aurionpro.Solution.model.GuitarSpec;
+import com.aurionpro.Solution.model.Inventory;
+import com.aurionpro.Solution.model.Type;
+import com.aurionpro.Solution.model.Wood;
+
+public class FindGuitarTester {
+	public static void main(String[] args) {
+
+		Inventory inventory = new Inventory();
+		initializeInventory(inventory);
+
+		GuitarSpec whatErinLikes = new GuitarSpec(Builder.FENDER, "Stratocastor", Type.ELECTRIC, Wood.ALDER,
+				Wood.ALDER);
+
+		List<Guitar> matchingGuitars = inventory.search(whatErinLikes);
+
+		if (!matchingGuitars.isEmpty()) {
+			System.out.println("Erin, you might like these guitars:");
+			for (Iterator<Guitar> i = matchingGuitars.iterator(); i.hasNext();) {
+				Guitar guitar = i.next();
+				GuitarSpec spec = guitar.getSpec();
+				System.out.println("\nWe have a " + spec.getBuilder() + " " + spec.getModel() + " "
+						+ spec.getType() + " guitar:\n" + spec.getBackWood() + " back and sides,\n"
+						+ spec.getTopWood() + " top.\nYou can have it for only ₹" + guitar.getPrice() + "!\n-----");
+			}
+		} else {
+			System.out.println("Sorry, Erin, we have nothing for you.");
+		}
+	}
+
+	private static void initializeInventory(Inventory inventory) {
+		inventory.addGuitar("11277", 14999.95, Builder.FENDER, "Stratocastor", Type.ELECTRIC, Wood.ALDER, Wood.ALDER);
+		inventory.addGuitar("V95693", 15499.95, Builder.FENDER, "Stratocastor", Type.ELECTRIC, Wood.ALDER, Wood.ALDER);
+		inventory.addGuitar("70108276", 22999.95, Builder.GIBSON, "SG", Type.ELECTRIC, Wood.MAHOGANY, Wood.MAHOGANY);
+	}
+}

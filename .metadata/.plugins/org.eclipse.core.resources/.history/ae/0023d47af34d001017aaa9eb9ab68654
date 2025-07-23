@@ -1,0 +1,17 @@
+package com.aurionpro.model;
+
+import java.util.Scanner;
+
+public class ReplaceAlphabet {
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Enter a string :");
+		String str1 = scanner.nextLine();
+		System.out.println("You Entered :"+str1);
+		String result = new String(str1);
+		for(int i=0;i<str1.length();i++) {
+			if()
+		}
+		
+	}
+}
