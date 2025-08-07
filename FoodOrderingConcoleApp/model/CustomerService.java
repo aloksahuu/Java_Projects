@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -18,12 +19,30 @@ public class CustomerService {
 		while (true) {
 			AdminService.viewMenu();
 			System.out.print("\nEnter Menu Item ID to add to cart (or 0 to finish): ");
-			int itemId = sc.nextInt();
+			int itemId;
+			try {
+				itemId = sc.nextInt();
+			} catch (InputMismatchException e) {
+				System.out.println("Invalid input. Please enter a valid number.");
+				sc.nextLine(); // clear buffer
+				continue;
+			}
 			if (itemId == 0)
 				break;
 
 			System.out.print("Enter quantity: ");
-			int qty = sc.nextInt();
+			int qty;
+			try {
+				qty = sc.nextInt();
+				if (qty <= 0) {
+					System.out.println("Quantity must be greater than 0.");
+					continue;
+				}
+			} catch (InputMismatchException e) {
+				System.out.println("Please enter a valid quantity.");
+				sc.nextLine();
+				continue;
+			}
 
 			MenuItem menuItem = fetchMenuItemById(itemId);
 			if (menuItem != null) {
@@ -55,15 +74,23 @@ public class CustomerService {
 			return;
 		}
 
-		System.out.println("\n===== YOUR CART =====");
+		System.out.println("\n===== YOUR CART =====\n");
+
+		System.out.printf("+----+----------------------+--------+----------+-------------+%n");
+		System.out.printf("| %-2s | %-20s | %-6s | %-8s | %-11s |%n", "ID", "Item Name", "Price", "Quantity", "Total");
+		System.out.printf("+----+----------------------+--------+----------+-------------+%n");
+
 		double total = 0;
 		for (OrderItem item : cart) {
-			System.out.println(item);
+			MenuItem m = item.getItem();
+			System.out.printf("| %-2d | %-20s | %6.2f | %8d | %11.2f |%n", m.getId(), m.getName(), m.getPrice(),
+					item.getQuantity(), item.getTotal());
 			total += item.getTotal();
 		}
+		System.out.printf("+----+----------------------+--------+----------+-------------+%n");
+		System.out.printf("Subtotal: ₹%.2f%n", total);
 
-		System.out.println("Total: ₹" + total);
-		System.out.print("Enter Coupon Code (SAVE10 or SAVE20 or NONE): ");
+		System.out.print("\nEnter Coupon Code (SAVE10 or SAVE20 or NONE): ");
 		sc.nextLine(); // consume newline
 		String coupon = sc.nextLine().toUpperCase();
 
@@ -74,35 +101,24 @@ public class CustomerService {
 			discount = 0.20 * total;
 
 		double finalAmount = total - discount;
-		System.out.println("Discount Applied: ₹" + discount);
-		System.out.println("Final Payable Amount: ₹" + finalAmount);
+		System.out.printf("Discount Applied: ₹%.2f%n", discount);
+		System.out.printf("Final Payable Amount: ₹%.2f%n", finalAmount);
 
-		// Ask for payment type
-		String paymentType = "";
-		while (true) {
-			System.out.print("Enter Payment Type (UPI / CASH / CARD): ");
-			paymentType = sc.nextLine().trim().toUpperCase();
-
-			if (paymentType.equals("UPI") || paymentType.equals("CASH") || paymentType.equals("CARD")) {
-				break;
-			} else {
-				System.out.println("Invalid payment type. Please enter UPI, CASH, or CARD.");
-			}
-		}
-
-		System.out.println("Payment method selected: " + paymentType);
+		System.out.print("\nChoose Payment Type (UPI/CASH): ");
+		String payment = sc.nextLine().toUpperCase();
+		System.out.println("Payment Type: " + payment);
 
 		DeliveryPartner dp = assignRandomPartner();
 		if (dp != null) {
-			System.out.println("\nYour order will be delivered by:");
-			System.out.println("Name: " + dp.getName());
-			System.out.println("Contact: " + dp.getContact());
+			System.out.println("\nYour order will be delivered by:\n");
+			System.out.printf("+-----------------------+------------------------+%n");
+			System.out.printf("| %-21s | %-22s |%n", "Delivery Partner", "Contact Number");
+			System.out.printf("+-----------------------+------------------------+%n");
+			System.out.printf("| %-21s | %-22s |%n", dp.getName(), dp.getContact());
+			System.out.printf("+-----------------------+------------------------+%n");
 		}
 
 		System.out.println("\nThank you for ordering!");
-		System.out.println("Payment Mode: " + paymentType);
-		System.out.println("Amount Paid: ₹" + finalAmount);
-
 		cart.clear();
 	}
 
