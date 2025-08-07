@@ -55,7 +55,7 @@ public class CustomerService {
 			return;
 		}
 
-		System.out.println("\n===== YOUR CART =====");
+		System.out.println("\n===== 🧾 YOUR CART =====");
 		double total = 0;
 		for (OrderItem item : cart) {
 			System.out.println(item);
@@ -77,43 +77,62 @@ public class CustomerService {
 		System.out.println("Discount Applied: ₹" + discount);
 		System.out.println("Final Payable Amount: ₹" + finalAmount);
 
-		DeliveryPartner dp = assignRandomPartner();
-		if (dp != null) {
-			System.out.println("\nYour order will be delivered by: " + dp);
+		// 🎯 Ask for payment type
+		String paymentType = "";
+		while (true) {
+			System.out.print("Enter Payment Type (UPI / CASH / CARD): ");
+			paymentType = sc.nextLine().trim().toUpperCase();
+
+			if (paymentType.equals("UPI") || paymentType.equals("CASH") || paymentType.equals("CARD")) {
+				break;
+			} else {
+				System.out.println("Invalid payment type. Please enter UPI, CASH, or CARD.");
+			}
 		}
 
-		System.out.println("Thank you for ordering!");
+		System.out.println("Payment method selected: " + paymentType);
+
+		DeliveryPartner dp = assignRandomPartner();
+		if (dp != null) {
+			System.out.println("\nYour order will be delivered by:");
+			System.out.println("Name: " + dp.getName());
+			System.out.println("Contact: " + dp.getContact());
+		}
+
+		System.out.println("\nThank you for ordering!");
+		System.out.println("Payment Mode: " + paymentType);
+		System.out.println("Amount Paid: ₹" + finalAmount);
+
 		cart.clear();
 	}
 
 	private static DeliveryPartner assignRandomPartner() {
-	    List<DeliveryPartner> partners = new ArrayList<>();
+		List<DeliveryPartner> partners = new ArrayList<>();
 
-	    try (Connection conn = DBUtil.getConnection();
-	         Statement stmt = conn.createStatement();
-	         ResultSet rs = stmt.executeQuery("SELECT * FROM delivery_partners")) {
+		try (Connection conn = DBUtil.getConnection();
+				Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery("SELECT * FROM delivery_partners")) {
 
-	        while (rs.next()) {
-	            int id = rs.getInt("id");
-	            String name = rs.getString("name");
-	            String contact = rs.getString("contact");
-	            partners.add(new DeliveryPartner(id, name, contact));
-	        }
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String name = rs.getString("name");
+				String contact = rs.getString("contact");
+				partners.add(new DeliveryPartner(id, name, contact));
+			}
 
-	        if (!partners.isEmpty()) {
-	            Random rand = new Random();
-	            return partners.get(rand.nextInt(partners.size()));
-	        } else {
-	            System.out.println("No delivery partners found in database.");
-	        }
+			if (!partners.isEmpty()) {
+				Random rand = new Random();
+				return partners.get(rand.nextInt(partners.size()));
+			} else {
+				System.out.println("No delivery partners found in database.");
+			}
 
-	    } catch (SQLException e) {
-	        System.out.println("SQL Error while assigning delivery partner: " + e.getMessage());
-	    } catch (Exception e) {
-	        System.out.println("Unexpected Error: " + e.getMessage());
-	    }
+		} catch (SQLException e) {
+			System.out.println("SQL Error while assigning delivery partner: " + e.getMessage());
+		} catch (Exception e) {
+			System.out.println("Unexpected Error: " + e.getMessage());
+		}
 
-	    return null;
+		return null;
 	}
-
 }
