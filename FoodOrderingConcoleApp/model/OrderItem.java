@@ -8,7 +8,10 @@ public class OrderItem {
 		this.item = item;
 		this.quantity = quantity;
 	}
-
+	
+	public int getQuantity() {
+		return quantity;
+	}
 	public double getTotal() {
 		return item.getPrice() * quantity;
 	}
