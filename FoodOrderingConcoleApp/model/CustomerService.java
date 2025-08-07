@@ -55,7 +55,7 @@ public class CustomerService {
 			return;
 		}
 
-		System.out.println("\n===== 🧾 YOUR CART =====");
+		System.out.println("\n===== YOUR CART =====");
 		double total = 0;
 		for (OrderItem item : cart) {
 			System.out.println(item);
@@ -77,7 +77,7 @@ public class CustomerService {
 		System.out.println("Discount Applied: ₹" + discount);
 		System.out.println("Final Payable Amount: ₹" + finalAmount);
 
-		// 🎯 Ask for payment type
+		// Ask for payment type
 		String paymentType = "";
 		while (true) {
 			System.out.print("Enter Payment Type (UPI / CASH / CARD): ");
