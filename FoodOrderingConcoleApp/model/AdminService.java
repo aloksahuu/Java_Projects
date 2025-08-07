@@ -12,11 +12,14 @@ public class AdminService {
 				ResultSet rs = stmt.executeQuery("SELECT * FROM menu_items")) {
 
 			System.out.println("\n===== MENU ITEMS =====");
+			System.out.printf("%-5s %-30s %-10s\n", "ID", "Item Name", "Price (₹)");
+			System.out.println("--------------------------------------------------");
+
 			while (rs.next()) {
 				int id = rs.getInt("id");
 				String name = rs.getString("name");
 				double price = rs.getDouble("price");
-				System.out.println(id + ". " + name + " - ₹" + price);
+				System.out.printf("%-5d %-30s %-10.2f\n", id, name, price);
 			}
 
 		} catch (Exception e) {
@@ -30,10 +33,15 @@ public class AdminService {
 				ResultSet rs = stmt.executeQuery("SELECT * FROM customers")) {
 
 			System.out.println("\n===== REGISTERED CUSTOMERS =====");
-			while (rs.next()) {
-			    System.out.println(rs.getInt("id") + " - " + rs.getString("name") + " - " + rs.getString("mobile"));
-			}
+			System.out.printf("%-5s %-25s %-15s\n", "ID", "Name", "Mobile");
+			System.out.println("------------------------------------------------");
 
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String name = rs.getString("name");
+				String mobile = rs.getString("mobile");
+				System.out.printf("%-5d %-25s %-15s\n", id, name, mobile);
+			}
 
 		} catch (Exception e) {
 			System.out.println("Error fetching customers: " + e.getMessage());
@@ -46,8 +54,14 @@ public class AdminService {
 				ResultSet rs = stmt.executeQuery("SELECT * FROM delivery_partners")) {
 
 			System.out.println("\n===== DELIVERY PARTNERS =====");
+			System.out.printf("%-5s %-25s %-15s\n", "ID", "Partner Name", "Contact");
+			System.out.println("------------------------------------------------");
+
 			while (rs.next()) {
-				System.out.println(rs.getInt("id") + ". " + rs.getString("name") + " - " + rs.getString("contact"));
+				int id = rs.getInt("id");
+				String name = rs.getString("name");
+				String contact = rs.getString("contact");
+				System.out.printf("%-5d %-25s %-15s\n", id, name, contact);
 			}
 
 		} catch (Exception e) {
